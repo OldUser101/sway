@@ -12,3 +12,6 @@ config-debug
 wayland-*-protocol.*
 /subprojects/wlroots
 subprojects
+.direnv/
+result
+.envrc
