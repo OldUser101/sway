@@ -633,6 +633,12 @@ static void ipc_get_dyn_ws_local_max_callback(struct sway_workspace *workspace, 
 
 /// find the next workspace number in series
 static void ipc_get_dyn_ws_find_next_callback(struct sway_workspace *workspace, void *data) {
+    struct sway_seat *seat = input_manager_get_default_seat();
+    struct sway_workspace *focused_ws = seat_get_focused_workspace(seat);
+
+    if (workspace->output != focused_ws->output)
+	    return;
+
     int *next = (int *)data;
     int ws_num = atoi(workspace->name);
 
@@ -645,6 +651,12 @@ static void ipc_get_dyn_ws_find_next_callback(struct sway_workspace *workspace, 
 
 /// find the previous workspace number in series
 static void ipc_get_dyn_ws_find_prev_callback(struct sway_workspace *workspace, void *data) {
+    struct sway_seat *seat = input_manager_get_default_seat();
+    struct sway_workspace *focused_ws = seat_get_focused_workspace(seat);
+
+    if (workspace->output != focused_ws->output)
+	    return;
+
     int *next = (int *)data;
     int ws_num = atoi(workspace->name);
 
