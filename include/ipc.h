@@ -23,6 +23,9 @@ enum ipc_command_type {
 	IPC_GET_INPUTS = 100,
 	IPC_GET_SEATS = 101,
 
+	// olduser101 extended commands
+	IPC_GET_DYNAMIC_WORKSPACES = 200,
+
 	// Events sent from sway to clients. Events have the highest bits set.
 	IPC_EVENT_WORKSPACE = ((1<<31) | 0),
 	IPC_EVENT_OUTPUT = ((1<<31) | 1),

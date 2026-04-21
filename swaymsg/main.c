@@ -307,6 +307,16 @@ static void pretty_print_config(json_object *c) {
 	printf("%s\n", json_object_get_string(config));
 }
 
+static void pretty_print_dyn_ws(json_object *obj) {
+    json_object *current, *next, *prev;
+    json_object_object_get_ex(obj, "current", &current);
+    json_object_object_get_ex(obj, "next", &next);
+    json_object_object_get_ex(obj, "prev", &prev);
+    printf("Current workspace: %d\n", json_object_get_int(current));
+    printf("Next workspace: %d\n", json_object_get_int(next));
+    printf("Previous workspace: %d\n", json_object_get_int(prev));
+}
+
 static void pretty_print_tree(json_object *obj, int indent) {
 	for (int i = 0; i < indent; i++) {
 		printf("  ");
@@ -390,12 +400,15 @@ static void pretty_print(int type, json_object *resp) {
 	case IPC_GET_TREE:
 		pretty_print_tree(resp, 0);
 		return;
+	case IPC_GET_DYNAMIC_WORKSPACES:
+        pretty_print_dyn_ws(resp);
+        return;
 	case IPC_COMMAND:
 	case IPC_GET_WORKSPACES:
 	case IPC_GET_INPUTS:
 	case IPC_GET_OUTPUTS:
 	case IPC_GET_SEATS:
-		break;
+        break;
 	default:
 		printf("%s\n", json_object_to_json_string_ext(resp,
 			JSON_C_TO_STRING_PRETTY | JSON_C_TO_STRING_SPACED));
@@ -536,7 +549,9 @@ int main(int argc, char **argv) {
 		type = IPC_GET_BINDING_STATE;
 	} else if (strcasecmp(cmdtype, "get_config") == 0) {
 		type = IPC_GET_CONFIG;
-	} else if (strcasecmp(cmdtype, "send_tick") == 0) {
+    } else if (strcasecmp(cmdtype, "get_dynamic_workspaces") == 0){
+        type = IPC_GET_DYNAMIC_WORKSPACES;
+    } else if (strcasecmp(cmdtype, "send_tick") == 0) {
 		type = IPC_SEND_TICK;
 	} else if (strcasecmp(cmdtype, "subscribe") == 0) {
 		type = IPC_SUBSCRIBE;
