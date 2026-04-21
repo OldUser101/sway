@@ -25,11 +25,12 @@
   libdrm,
   libxcb-wm,
   systemd,
+  version ? "git",
 }:
 
 stdenv.mkDerivation (finalAttrs: {
-  pname = "sway";
-  version = "1.11";
+  inherit version;
+  pname = "sway-unwrapped";
 
   src = ./.;
 
