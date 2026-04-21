@@ -4,19 +4,27 @@
   outputs =
     { self, nixpkgs }:
     let
-      forAllSystems =
-        f:
-        nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (system: f nixpkgs.legacyPackages.${system});
-
       shortRev = self.shortRev or self.dirtyShortRev or "unknown";
       overlays = import ./overlay.nix { inherit shortRev; };
+
+      forAllSystems =
+        f:
+        nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (
+          system:
+          f (
+            import nixpkgs {
+              inherit system;
+              overlays = [ overlays.default ];
+            }
+          )
+        );
     in
     {
       inherit overlays;
 
       packages = forAllSystems (pkgs: {
-        sway = pkgs.callPackage ./package.nix { version = "olduser101-git-${shortRev}"; };
-        default = self.packages.${pkgs.stdenv.hostPlatform.system}.sway;
+        sway-unwrapped = pkgs.sway-unwrapped;
+        default = pkgs.sway-unwrapped;
       });
 
       devShells = forAllSystems (pkgs: {
