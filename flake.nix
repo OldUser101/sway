@@ -48,7 +48,7 @@
             gdk-pixbuf
             librsvg
             wayland-protocols
-            wlroots_0_19
+            wlroots_0_20
             libdrm
             libxcb-wm
           ];

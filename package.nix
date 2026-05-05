@@ -1,9 +1,6 @@
 {
   lib,
   stdenv,
-  fetchFromGitHub,
-  replaceVars,
-  swaybg,
   meson,
   ninja,
   pkg-config,
@@ -20,11 +17,10 @@
   libinput,
   gdk-pixbuf,
   librsvg,
-  wlroots_0_19,
+  wlroots_0_20,
   wayland-protocols,
   libdrm,
   libxcb-wm,
-  systemd,
   version ? "git",
 }:
 
@@ -62,7 +58,7 @@ stdenv.mkDerivation (finalAttrs: {
     wayland-protocols
     libdrm
     libxcb-wm
-    wlroots_0_19
+    wlroots_0_20
   ];
 
   mesonFlags =
