@@ -507,6 +507,14 @@ static void ipc_json_describe_workspace(struct sway_workspace *workspace,
 		num = -1;
 	}
 	json_object_object_add(object, "num", json_object_new_int(num));
+
+    json_object *tags_array = json_object_new_array();
+    for (int i = 0; i < workspace->tags->length; ++i) {
+	    json_object *tag = json_object_new_string(workspace->tags->items[i]);
+        json_object_array_add(tags_array, tag);
+    }
+	json_object_object_add(object, "tags", tags_array);
+
 	json_object_object_add(object, "fullscreen_mode", json_object_new_int(1));
 	json_object_object_add(object, "output", workspace->output ?
 			json_object_new_string(workspace->output->wlr_output->name) : NULL);

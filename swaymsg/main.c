@@ -63,9 +63,10 @@ static void pretty_print_cmd(json_object *r) {
 }
 
 static void pretty_print_workspace(json_object *w) {
-	json_object *name, *rect, *visible, *output, *urgent, *layout,
+	json_object *name, *tags, *rect, *visible, *output, *urgent, *layout,
 				*representation, *focused;
 	json_object_object_get_ex(w, "name", &name);
+	json_object_object_get_ex(w, "tags", &tags);
 	json_object_object_get_ex(w, "rect", &rect);
 	json_object_object_get_ex(w, "visible", &visible);
 	json_object_object_get_ex(w, "output", &output);
@@ -77,7 +78,8 @@ static void pretty_print_workspace(json_object *w) {
 		"Workspace %s%s%s%s\n"
 		"  Output: %s\n"
 		"  Layout: %s\n"
-		"  Representation: %s\n\n",
+		"  Representation: %s\n"
+		"  Tags:\n",
 		json_object_get_string(name),
 		json_object_get_boolean(focused) ? " (focused)" : "",
 		!json_object_get_boolean(visible) ? " (off-screen)" : "",
@@ -86,6 +88,12 @@ static void pretty_print_workspace(json_object *w) {
 		json_object_get_string(layout),
 		json_object_get_string(representation)
 	);
+	size_t tags_len = json_object_array_length(tags);
+	for (size_t i = 0; i < tags_len; ++i) {
+		json_object *tag = json_object_array_get_idx(tags, i);
+        printf("    %s\n", json_object_get_string(tag));
+	}
+	printf("\n");
 }
 
 static const char *pretty_type_name(const char *name) {

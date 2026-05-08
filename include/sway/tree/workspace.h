@@ -6,6 +6,7 @@
 #include "sway/config.h"
 #include "sway/tree/container.h"
 #include "sway/tree/node.h"
+#include "list.h"
 
 struct sway_view;
 
@@ -34,6 +35,7 @@ struct sway_workspace {
 
 	char *name;
 	char *representation;
+	list_t *tags;
 
 	double x, y;
 	int width, height;

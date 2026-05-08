@@ -84,6 +84,7 @@ struct sway_workspace *workspace_create(struct sway_output *output,
 	}
 
 	ws->name = strdup(name);
+	ws->tags = create_list();
 	ws->prev_split_layout = L_NONE;
 	ws->layout = output_get_default_layout(output);
 	ws->floating = create_list();
@@ -150,6 +151,7 @@ void workspace_destroy(struct sway_workspace *workspace) {
 
 	free(workspace->name);
 	free(workspace->representation);
+	list_free_items_and_destroy(workspace->tags);
 	list_free_items_and_destroy(workspace->output_priority);
 	list_free(workspace->floating);
 	list_free(workspace->tiling);
