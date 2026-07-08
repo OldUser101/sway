@@ -17,7 +17,7 @@
   libinput,
   gdk-pixbuf,
   librsvg,
-  wlroots,
+  wlroots_0_20,
   wayland-protocols,
   libdrm,
   libxcb-wm,
@@ -58,7 +58,7 @@ stdenv.mkDerivation (finalAttrs: {
     wayland-protocols
     libdrm
     libxcb-wm
-    wlroots
+    wlroots_0_20
   ];
 
   mesonFlags =

@@ -2,11 +2,11 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1783247743,
-        "narHash": "sha256-9b2xGt5CAd6WriPJOZs/EYXq9fGVCeoisYo1P3nhL2Y=",
+        "lastModified": 1776255774,
+        "narHash": "sha256-psVTpH6PK3q1htMJpmdz1hLF5pQgEshu7gQWgKO6t6Y=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c4013e501c048ae7c4a8940c92837636042bf6c3",
+        "rev": "566acc07c54dc807f91625bb286cb9b321b5f42a",
         "type": "github"
       },
       "original": {
@@ -16,30 +16,9 @@
         "type": "github"
       }
     },
-    "olduser101-wlroots": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1783280952,
-        "narHash": "sha256-uO7ioGZAjXJ7JGu7VeiIXNna32P6X0u9oNznBYp9Yp4=",
-        "owner": "OldUser101",
-        "repo": "wlroots",
-        "rev": "16b247d29a6daae91d55b3f756a0f7e14b3f632d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "OldUser101",
-        "repo": "wlroots",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
-        "olduser101-wlroots": "olduser101-wlroots"
+        "nixpkgs": "nixpkgs"
       }
     }
   },

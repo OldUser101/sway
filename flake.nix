@@ -1,10 +1,8 @@
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.olduser101-wlroots.url = "github:OldUser101/wlroots";
-  inputs.olduser101-wlroots.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs =
-    { self, nixpkgs, olduser101-wlroots }:
+    { self, nixpkgs }:
     let
       shortRev = self.shortRev or self.dirtyShortRev or "unknown";
       overlays = import ./overlay.nix { inherit shortRev; };
@@ -16,10 +14,7 @@
           f (
             import nixpkgs {
               inherit system;
-              overlays = [
-                olduser101-wlroots.overlays.default
-                overlays.default
-              ];
+              overlays = [ overlays.default ];
             }
           )
         );
@@ -53,7 +48,7 @@
             gdk-pixbuf
             librsvg
             wayland-protocols
-            wlroots
+            wlroots_0_20
             libdrm
             libxcb-wm
           ];
