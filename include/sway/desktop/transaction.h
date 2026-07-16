@@ -1,7 +1,7 @@
 #ifndef _SWAY_TRANSACTION_H
 #define _SWAY_TRANSACTION_H
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <wlr/types/wlr_scene.h>
 
 /**
@@ -45,7 +45,7 @@ void transaction_commit_dirty_client(void);
  * ready.
  */
 bool transaction_notify_view_ready_by_serial(struct sway_view *view,
-		uint32_t serial);
+                                             uint32_t serial);
 
 /**
  * Notify the transaction system that a view is ready for the new layout, but
@@ -56,8 +56,8 @@ bool transaction_notify_view_ready_by_serial(struct sway_view *view,
  * A success boolean is returned denoting that this part of the transaction is
  * ready.
  */
-bool transaction_notify_view_ready_by_geometry(struct sway_view *view,
-		double x, double y, int width, int height);
+bool transaction_notify_view_ready_by_geometry(struct sway_view *view, double x,
+                                               double y, int width, int height);
 
 void arrange_popups(struct wlr_scene_tree *popups);
 

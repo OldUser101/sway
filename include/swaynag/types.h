@@ -1,36 +1,36 @@
 #ifndef _SWAYNAG_TYPES_H
 #define _SWAYNAG_TYPES_H
 
-#include <stdint.h>
-#include <pango/pangocairo.h>
 #include "list.h"
+#include <pango/pangocairo.h>
+#include <stdint.h>
 
 struct swaynag_type {
-	char *name;
+    char *name;
 
-	PangoFontDescription *font_description;
-	char *output;
-	uint32_t anchors;
-	int32_t layer; // enum zwlr_layer_shell_v1_layer or -1 if unset
+    PangoFontDescription *font_description;
+    char *output;
+    uint32_t anchors;
+    int32_t layer; // enum zwlr_layer_shell_v1_layer or -1 if unset
 
-	// Colors
-	uint32_t button_text;
-	uint32_t button_background;
-	uint32_t details_background;
-	uint32_t background;
-	uint32_t text;
-	uint32_t border;
-	uint32_t border_bottom;
+    // Colors
+    uint32_t button_text;
+    uint32_t button_background;
+    uint32_t details_background;
+    uint32_t background;
+    uint32_t text;
+    uint32_t border;
+    uint32_t border_bottom;
 
-	// Sizing
-	ssize_t bar_border_thickness;
-	ssize_t message_padding;
-	ssize_t details_border_thickness;
-	ssize_t button_border_thickness;
-	ssize_t button_gap;
-	ssize_t button_gap_close;
-	ssize_t button_margin_right;
-	ssize_t button_padding;
+    // Sizing
+    ssize_t bar_border_thickness;
+    ssize_t message_padding;
+    ssize_t details_border_thickness;
+    ssize_t button_border_thickness;
+    ssize_t button_gap;
+    ssize_t button_gap_close;
+    ssize_t button_margin_right;
+    ssize_t button_padding;
 };
 
 struct swaynag_type *swaynag_type_new(const char *name);

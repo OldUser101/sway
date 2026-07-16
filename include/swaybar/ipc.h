@@ -1,7 +1,7 @@
 #ifndef _SWAYBAR_IPC_H
 #define _SWAYBAR_IPC_H
-#include <stdbool.h>
 #include "swaybar/bar.h"
+#include <stdbool.h>
 
 bool ipc_initialize(struct swaybar *bar);
 bool handle_ipc_readable(struct swaybar *bar);

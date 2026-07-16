@@ -1,9 +1,9 @@
 #ifndef _SWAY_NODE_H
 #define _SWAY_NODE_H
-#include <wayland-server-core.h>
-#include <stdbool.h>
-#include <wlr/types/wlr_scene.h>
 #include "list.h"
+#include <stdbool.h>
+#include <wayland-server-core.h>
+#include <wlr/types/wlr_scene.h>
 
 #define MIN_SANE_W 100
 #define MIN_SANE_H 60
@@ -16,38 +16,38 @@ struct sway_transaction_instruction;
 struct wlr_box;
 
 enum sway_node_type {
-	N_ROOT,
-	N_OUTPUT,
-	N_WORKSPACE,
-	N_CONTAINER,
+    N_ROOT,
+    N_OUTPUT,
+    N_WORKSPACE,
+    N_CONTAINER,
 };
 
 struct sway_node {
-	enum sway_node_type type;
-	union {
-		struct sway_root *sway_root;
-		struct sway_output *sway_output;
-		struct sway_workspace *sway_workspace;
-		struct sway_container *sway_container;
-	};
+    enum sway_node_type type;
+    union {
+        struct sway_root *sway_root;
+        struct sway_output *sway_output;
+        struct sway_workspace *sway_workspace;
+        struct sway_container *sway_container;
+    };
 
-	/**
-	 * A unique ID to identify this node.
-	 * Primarily used in the get_tree JSON output.
-	 */
-	size_t id;
+    /**
+     * A unique ID to identify this node.
+     * Primarily used in the get_tree JSON output.
+     */
+    size_t id;
 
-	struct sway_transaction_instruction *instruction;
-	size_t ntxnrefs;
-	bool destroying;
+    struct sway_transaction_instruction *instruction;
+    size_t ntxnrefs;
+    bool destroying;
 
-	// If true, indicates that the container has pending state that differs from
-	// the current.
-	bool dirty;
+    // If true, indicates that the container has pending state that differs from
+    // the current.
+    bool dirty;
 
-	struct {
-		struct wl_signal destroy;
-	} events;
+    struct {
+        struct wl_signal destroy;
+    } events;
 };
 
 void node_init(struct sway_node *node, enum sway_node_type type, void *thing);
@@ -85,6 +85,6 @@ void scene_node_disown_children(struct wlr_scene_tree *tree);
 // occurs a flag is flipped that can be checked later to destroy a parent
 // of this scene node preventing memory leaks.
 struct wlr_scene_tree *alloc_scene_tree(struct wlr_scene_tree *parent,
-		bool *failed);
+                                        bool *failed);
 
 #endif

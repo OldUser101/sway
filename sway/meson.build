@@ -89,7 +89,6 @@ sway_sources = files(
 	'commands/popup_during_fullscreen.c',
 	'commands/primary_selection.c',
 	'commands/reload.c',
-	'commands/rename.c',
 	'commands/resize.c',
 	'commands/scratchpad.c',
 	'commands/seat.c',

@@ -1,25 +1,25 @@
 #ifndef _SWAY_LAUNCHER_H
 #define _SWAY_LAUNCHER_H
 
+#include "sway/input/seat.h"
 #include <stdlib.h>
 #include <wayland-server-core.h>
-#include "sway/input/seat.h"
 
 struct launcher_ctx {
-	pid_t pid;
-	char *fallback_name;
-	struct wlr_xdg_activation_token_v1 *token;
-	struct wl_listener token_destroy;
-	struct sway_seat *seat;
-	struct wl_listener seat_destroy;
+    pid_t pid;
+    int fallback_num;
+    struct wlr_xdg_activation_token_v1 *token;
+    struct wl_listener token_destroy;
+    struct sway_seat *seat;
+    struct wl_listener seat_destroy;
 
-	bool activated;
-	bool had_focused_surface;
+    bool activated;
+    bool had_focused_surface;
 
-	struct sway_node *node;
-	struct wl_listener node_destroy;
+    struct sway_node *node;
+    struct wl_listener node_destroy;
 
-	struct wl_list link; // sway_server::pending_launcher_ctxs
+    struct wl_list link; // sway_server::pending_launcher_ctxs
 };
 
 struct launcher_ctx *launcher_ctx_find_pid(pid_t pid);
@@ -32,8 +32,9 @@ void launcher_ctx_destroy(struct launcher_ctx *ctx);
 
 struct launcher_ctx *launcher_ctx_create_internal(void);
 
-struct launcher_ctx *launcher_ctx_create(
-	struct wlr_xdg_activation_token_v1 *token, struct sway_node *node);
+struct launcher_ctx *
+launcher_ctx_create(struct wlr_xdg_activation_token_v1 *token,
+                    struct sway_node *node);
 
 const char *launcher_ctx_get_token_name(struct launcher_ctx *ctx);
 

@@ -35,6 +35,7 @@
             pkg-config
             wayland-scanner
             scdoc
+            clang-tools
 
             libGL
             wayland

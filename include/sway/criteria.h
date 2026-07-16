@@ -2,60 +2,59 @@
 #define _SWAY_CRITERIA_H
 
 #define PCRE2_CODE_UNIT_WIDTH 8
-#include <pcre2.h>
 #include "config.h"
 #include "list.h"
 #include "tree/view.h"
+#include <pcre2.h>
 
 #if WLR_HAS_XWAYLAND
 #include "sway/xwayland.h"
 #endif
 
 enum criteria_type {
-	CT_COMMAND                 = 1 << 0,
-	CT_ASSIGN_OUTPUT           = 1 << 1,
-	CT_ASSIGN_WORKSPACE        = 1 << 2,
-	CT_ASSIGN_WORKSPACE_NUMBER = 1 << 3,
-	CT_NO_FOCUS                = 1 << 4,
+    CT_COMMAND = 1 << 0,
+    CT_ASSIGN_OUTPUT = 1 << 1,
+    CT_ASSIGN_WORKSPACE = 1 << 2,
+    CT_NO_FOCUS = 1 << 3,
 };
 
 enum pattern_type {
-	PATTERN_PCRE2,
-	PATTERN_FOCUSED,
+    PATTERN_PCRE2,
+    PATTERN_FOCUSED,
 };
 
 struct pattern {
-	enum pattern_type match_type;
-	pcre2_code *regex;
+    enum pattern_type match_type;
+    pcre2_code *regex;
 };
 
 struct criteria {
-	enum criteria_type type;
-	char *raw; // entire criteria string (for logging)
-	char *cmdlist;
-	char *target; // workspace or output name for `assign` criteria
+    enum criteria_type type;
+    char *raw; // entire criteria string (for logging)
+    char *cmdlist;
+    char *target; // workspace or output name for `assign` criteria
 
-	struct pattern *title;
-	struct pattern *shell;
-	struct pattern *app_id;
-	struct pattern *con_mark;
-	uint32_t con_id; // internal ID
+    struct pattern *title;
+    struct pattern *shell;
+    struct pattern *app_id;
+    struct pattern *con_mark;
+    uint32_t con_id; // internal ID
 #if WLR_HAS_XWAYLAND
-	struct pattern *class;
-	uint32_t id; // X11 window ID
-	struct pattern *instance;
-	struct pattern *window_role;
-	enum atom_name window_type;
+    struct pattern *class;
+    uint32_t id; // X11 window ID
+    struct pattern *instance;
+    struct pattern *window_role;
+    enum atom_name window_type;
 #endif
-	bool all;
-	bool floating;
-	bool tiling;
-	char urgent; // 'l' for latest or 'o' for oldest
-	struct pattern *workspace;
-	pid_t pid;
-	struct pattern *sandbox_engine;
-	struct pattern *sandbox_app_id;
-	struct pattern *sandbox_instance_id;
+    bool all;
+    bool floating;
+    bool tiling;
+    char urgent; // 'l' for latest or 'o' for oldest
+    struct pattern *workspace;
+    pid_t pid;
+    struct pattern *sandbox_engine;
+    struct pattern *sandbox_app_id;
+    struct pattern *sandbox_instance_id;
 };
 
 bool criteria_is_empty(struct criteria *criteria);

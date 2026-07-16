@@ -9,29 +9,29 @@
 #elif HAVE_BASU
 #include <basu/sd-bus.h>
 #endif
+#include "list.h"
+#include "swaybar/tray/host.h"
 #include <cairo.h>
 #include <stdint.h>
-#include "swaybar/tray/host.h"
-#include "list.h"
 
 struct swaybar;
 struct swaybar_output;
 struct swaybar_watcher;
 
 struct swaybar_tray {
-	struct swaybar *bar;
+    struct swaybar *bar;
 
-	int fd;
-	sd_bus *bus;
+    int fd;
+    sd_bus *bus;
 
-	struct swaybar_host host_xdg;
-	struct swaybar_host host_kde;
-	list_t *items; // struct swaybar_sni *
-	struct swaybar_watcher *watcher_xdg;
-	struct swaybar_watcher *watcher_kde;
+    struct swaybar_host host_xdg;
+    struct swaybar_host host_kde;
+    list_t *items; // struct swaybar_sni *
+    struct swaybar_watcher *watcher_xdg;
+    struct swaybar_watcher *watcher_kde;
 
-	list_t *basedirs; // char *
-	list_t *themes; // struct swaybar_theme *
+    list_t *basedirs; // char *
+    list_t *themes;   // struct swaybar_theme *
 };
 
 struct swaybar_tray *create_tray(struct swaybar *bar);

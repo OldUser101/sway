@@ -1,40 +1,41 @@
 #ifndef _SWAY_INPUT_INPUT_MANAGER_H
 #define _SWAY_INPUT_INPUT_MANAGER_H
+#include "list.h"
+#include "sway/config.h"
 #include <libinput.h>
 #include <wlr/types/wlr_keyboard_shortcuts_inhibit_v1.h>
+#include <wlr/types/wlr_transient_seat_v1.h>
 #include <wlr/types/wlr_virtual_keyboard_v1.h>
 #include <wlr/types/wlr_virtual_pointer_v1.h>
-#include <wlr/types/wlr_transient_seat_v1.h>
-#include "sway/config.h"
-#include "list.h"
 
 struct sway_server;
 
 struct sway_input_device {
-	char *identifier;
-	struct wlr_input_device *wlr_device;
-	struct wl_list link;
-	struct wl_listener device_destroy;
-	bool is_virtual;
+    char *identifier;
+    struct wlr_input_device *wlr_device;
+    struct wl_list link;
+    struct wl_listener device_destroy;
+    bool is_virtual;
 };
 
 struct sway_input_manager {
-	struct wl_list devices;
-	struct wl_list seats;
+    struct wl_list devices;
+    struct wl_list seats;
 
-	struct wlr_keyboard_shortcuts_inhibit_manager_v1 *keyboard_shortcuts_inhibit;
-	struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard;
-	struct wlr_virtual_pointer_manager_v1 *virtual_pointer;
-	struct wlr_pointer_gestures_v1 *pointer_gestures;
-	struct wlr_transient_seat_manager_v1 *transient_seat_manager;
+    struct wlr_keyboard_shortcuts_inhibit_manager_v1
+        *keyboard_shortcuts_inhibit;
+    struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard;
+    struct wlr_virtual_pointer_manager_v1 *virtual_pointer;
+    struct wlr_pointer_gestures_v1 *pointer_gestures;
+    struct wlr_transient_seat_manager_v1 *transient_seat_manager;
 
-	struct wl_listener new_input;
-	struct wl_listener inhibit_activate;
-	struct wl_listener inhibit_deactivate;
-	struct wl_listener keyboard_shortcuts_inhibit_new_inhibitor;
-	struct wl_listener virtual_keyboard_new;
-	struct wl_listener virtual_pointer_new;
-	struct wl_listener transient_seat_create;
+    struct wl_listener new_input;
+    struct wl_listener inhibit_activate;
+    struct wl_listener inhibit_deactivate;
+    struct wl_listener keyboard_shortcuts_inhibit_new_inhibitor;
+    struct wl_listener virtual_keyboard_new;
+    struct wl_listener virtual_pointer_new;
+    struct wl_listener transient_seat_create;
 };
 
 struct sway_input_manager *input_manager_create(struct sway_server *server);

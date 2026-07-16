@@ -1,12 +1,14 @@
 #ifndef _SWAY_STRINGOP_H
 #define _SWAY_STRINGOP_H
 
+#include "list.h"
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include "list.h"
 
 #ifdef __GNUC__
-#define _SWAY_ATTRIB_PRINTF(start, end) __attribute__((format(printf, start, end)))
+#define _SWAY_ATTRIB_PRINTF(start, end)                                        \
+    __attribute__((format(printf, start, end)))
 #else
 #define _SWAY_ATTRIB_PRINTF(start, end)
 #endif

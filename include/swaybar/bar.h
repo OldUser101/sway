@@ -1,12 +1,12 @@
 #ifndef _SWAYBAR_BAR_H
 #define _SWAYBAR_BAR_H
-#include <wayland-client.h>
 #include "config.h"
+#include "cursor-shape-v1-client-protocol.h"
 #include "input.h"
 #include "pool-buffer.h"
-#include "cursor-shape-v1-client-protocol.h"
 #include "wlr-layer-shell-unstable-v1-client-protocol.h"
 #include "xdg-output-unstable-v1-client-protocol.h"
+#include <wayland-client.h>
 
 struct swaybar_config;
 struct swaybar_output;
@@ -17,77 +17,77 @@ struct swaybar_workspace;
 struct loop;
 
 struct swaybar {
-	char *id;
-	char *mode;
-	bool mode_pango_markup;
+    char *id;
+    char *mode;
+    bool mode_pango_markup;
 
-	// only relevant when bar is in "hide" mode
-	bool visible_by_modifier;
-	bool visible_by_urgency;
-	bool visible_by_mode;
-	bool visible;
+    // only relevant when bar is in "hide" mode
+    bool visible_by_modifier;
+    bool visible_by_urgency;
+    bool visible_by_mode;
+    bool visible;
 
-	struct wl_display *display;
-	struct wl_compositor *compositor;
-	struct zwlr_layer_shell_v1 *layer_shell;
-	struct zxdg_output_manager_v1 *xdg_output_manager;
-	struct wp_cursor_shape_manager_v1 *cursor_shape_manager;
-	struct wl_shm *shm;
+    struct wl_display *display;
+    struct wl_compositor *compositor;
+    struct zwlr_layer_shell_v1 *layer_shell;
+    struct zxdg_output_manager_v1 *xdg_output_manager;
+    struct wp_cursor_shape_manager_v1 *cursor_shape_manager;
+    struct wl_shm *shm;
 
-	struct swaybar_config *config;
-	struct status_line *status;
+    struct swaybar_config *config;
+    struct status_line *status;
 
-	struct loop *eventloop;
+    struct loop *eventloop;
 
-	int ipc_event_socketfd;
-	int ipc_socketfd;
+    int ipc_event_socketfd;
+    int ipc_socketfd;
 
-	struct wl_list outputs; // swaybar_output::link
-	struct wl_list unused_outputs; // swaybar_output::link
-	struct wl_list seats; // swaybar_seat::link
+    struct wl_list outputs;        // swaybar_output::link
+    struct wl_list unused_outputs; // swaybar_output::link
+    struct wl_list seats;          // swaybar_seat::link
 
 #if HAVE_TRAY
-	struct swaybar_tray *tray;
+    struct swaybar_tray *tray;
 #endif
 
-	bool running;
+    bool running;
 };
 
 struct swaybar_output {
-	struct wl_list link; // swaybar::outputs
-	struct swaybar *bar;
-	struct wl_output *output;
-	struct zxdg_output_v1 *xdg_output;
-	struct wl_surface *surface;
-	struct zwlr_layer_surface_v1 *layer_surface;
-	uint32_t wl_name;
+    struct wl_list link; // swaybar::outputs
+    struct swaybar *bar;
+    struct wl_output *output;
+    struct zxdg_output_v1 *xdg_output;
+    struct wl_surface *surface;
+    struct zwlr_layer_surface_v1 *layer_surface;
+    uint32_t wl_name;
 
-	struct wl_list workspaces; // swaybar_workspace::link
-	struct wl_list hotspots; // swaybar_hotspot::link
+    struct wl_list workspaces; // swaybar_workspace::link
+    struct wl_list hotspots;   // swaybar_hotspot::link
 
-	char *name;
-	char *identifier;
-	bool focused;
+    char *name;
+    char *identifier;
+    bool focused;
 
-	uint32_t width, height;
-	int32_t scale;
-	enum wl_output_subpixel subpixel;
-	struct pool_buffer buffers[2];
-	struct pool_buffer *current_buffer;
-	bool dirty;
-	bool frame_scheduled;
+    uint32_t width, height;
+    int32_t scale;
+    enum wl_output_subpixel subpixel;
+    struct pool_buffer buffers[2];
+    struct pool_buffer *current_buffer;
+    bool dirty;
+    bool frame_scheduled;
 
-	uint32_t output_height, output_width, output_x, output_y;
+    uint32_t output_height, output_width, output_x, output_y;
 };
 
 struct swaybar_workspace {
-	struct wl_list link; // swaybar_output::workspaces
-	int num;
-	char *name;
-	char *label;
-	bool focused;
-	bool visible;
-	bool urgent;
+    struct wl_list link; // swaybar_output::workspaces
+    int num;
+    char *name;
+    char *label;
+    bool focused;
+    bool visible;
+    bool urgent;
 };
 
 bool bar_setup(struct swaybar *bar, const char *socket_path);

@@ -1,0 +1,6 @@
+AccessModifierOffset: -4
+BasedOnStyle: LLVM
+BreakAfterReturnType: AllDefinitions
+BreakBeforeBraces: Linux
+IndentCaseLabels: true
+IndentWidth: 4

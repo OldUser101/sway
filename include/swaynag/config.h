@@ -1,10 +1,11 @@
 #ifndef _SWAYNAG_CONFIG_H
 #define _SWAYNAG_CONFIG_H
-#include "swaynag/swaynag.h"
 #include "list.h"
+#include "swaynag/swaynag.h"
 
 int swaynag_parse_options(int argc, char **argv, struct swaynag *swaynag,
-		list_t *types, struct swaynag_type *type, char **config, bool *debug);
+                          list_t *types, struct swaynag_type *type,
+                          char **config, bool *debug);
 
 char *swaynag_get_config_path(void);
 
