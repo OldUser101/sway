@@ -669,68 +669,6 @@ ipc_get_marks_callback(struct sway_container *con, void *data)
     }
 }
 
-/// get the maximum global workspace number
-static void
-ipc_get_dyn_ws_global_max_callback(struct sway_workspace *workspace, void *data)
-{
-    int *next = (int *)data;
-    if (workspace->num > *next)
-        *next = workspace->num;
-}
-
-/// get the maximum output workspace number
-static void
-ipc_get_dyn_ws_local_max_callback(struct sway_workspace *workspace, void *data)
-{
-    struct sway_seat *seat = input_manager_get_default_seat();
-    struct sway_workspace *focused_ws = seat_get_focused_workspace(seat);
-
-    if (workspace->output != focused_ws->output)
-        return;
-
-    int *next = (int *)data;
-    if (workspace->num > *next)
-        *next = workspace->num;
-}
-
-/// find the next workspace number in series
-static void
-ipc_get_dyn_ws_find_next_callback(struct sway_workspace *workspace, void *data)
-{
-    struct sway_seat *seat = input_manager_get_default_seat();
-    struct sway_workspace *focused_ws = seat_get_focused_workspace(seat);
-
-    if (workspace->output != focused_ws->output)
-        return;
-
-    int *next = (int *)data;
-
-    if (workspace->num <= next[0])
-        return;
-
-    if (workspace->num - next[0] < next[1] - next[0])
-        next[1] = workspace->num;
-}
-
-/// find the previous workspace number in series
-static void
-ipc_get_dyn_ws_find_prev_callback(struct sway_workspace *workspace, void *data)
-{
-    struct sway_seat *seat = input_manager_get_default_seat();
-    struct sway_workspace *focused_ws = seat_get_focused_workspace(seat);
-
-    if (workspace->output != focused_ws->output)
-        return;
-
-    int *next = (int *)data;
-
-    if (workspace->num >= next[0])
-        return;
-
-    if (next[0] - workspace->num < next[0] - next[1])
-        next[1] = workspace->num;
-}
-
 void
 ipc_client_handle_command(struct ipc_client *client, uint32_t payload_length,
                           enum ipc_command_type payload_type)
@@ -795,48 +733,6 @@ ipc_client_handle_command(struct ipc_client *client, uint32_t payload_length,
         case IPC_SEND_TICK: {
             ipc_event_tick(buf);
             ipc_send_reply(client, payload_type, "{\"success\": true}", 17);
-            goto exit_cleanup;
-        }
-
-        case IPC_GET_DYNAMIC_WORKSPACES: {
-            struct sway_seat *seat = input_manager_get_default_seat();
-            struct sway_workspace *focused_ws =
-                seat_get_focused_workspace(seat);
-
-            int current = focused_ws->num;
-            int next[2] = {current, INT_MAX};
-            int prev[2] = {current, 0};
-
-            root_for_each_workspace(ipc_get_dyn_ws_find_next_callback, &next);
-            root_for_each_workspace(ipc_get_dyn_ws_find_prev_callback, &prev);
-
-            if (next[1] == INT_MAX) {
-                int global_max = 0;
-                root_for_each_workspace(ipc_get_dyn_ws_global_max_callback,
-                                        &global_max);
-                next[1] = global_max + 1;
-            }
-
-            if (prev[1] == 0) {
-                int local_max = 0;
-                root_for_each_workspace(ipc_get_dyn_ws_local_max_callback,
-                                        &local_max);
-                prev[1] = local_max;
-            }
-
-            json_object *dyn_ws = json_object_new_object();
-            json_object_object_add(dyn_ws, "current",
-                                   json_object_new_int(current));
-            json_object_object_add(dyn_ws, "next",
-                                   json_object_new_int(next[1]));
-            json_object_object_add(dyn_ws, "prev",
-                                   json_object_new_int(prev[1]));
-
-            const char *json_string = json_object_to_json_string(dyn_ws);
-            ipc_send_reply(client, payload_type, json_string,
-                           (uint32_t)strlen(json_string));
-            json_object_put(dyn_ws); // free
-
             goto exit_cleanup;
         }
 

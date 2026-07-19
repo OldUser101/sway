@@ -31,6 +31,39 @@ workspace_read_num(char *s)
     return (int)lnum;
 }
 
+static int
+workspace_get_max_num()
+{
+    int maxn = -1;
+
+    for (int i = 0; i < root->outputs->length; ++i) {
+        struct sway_output *output = root->outputs->items[i];
+        for (int j = 0; j < output->workspaces->length; ++j) {
+            struct sway_workspace *ws = output->workspaces->items[j];
+            if (ws->num > maxn) {
+                maxn = ws->num;
+            }
+        }
+    }
+
+    return maxn;
+}
+
+static int
+workspace_get_output_max_num(struct sway_output *output)
+{
+    int maxn = -1;
+
+    for (int i = 0; i < output->workspaces->length; ++i) {
+        struct sway_workspace *ws = output->workspaces->items[i];
+        if (ws->num > maxn) {
+            maxn = ws->num;
+        }
+    }
+
+    return maxn;
+}
+
 struct workspace_config *
 workspace_find_config(int ws_num)
 {
@@ -73,9 +106,13 @@ workspace_get_initial_output(int ws_num)
 struct sway_workspace *
 workspace_create(struct sway_output *output, int num)
 {
-
     if (output == NULL) {
         output = workspace_get_initial_output(num);
+    }
+
+    if (num == -1) {
+        // get the next available number
+        num = workspace_get_max_num() + 1;
     }
 
     sway_log(SWAY_DEBUG, "Adding workspace %d for output %s", num,
@@ -351,12 +388,9 @@ workspace_next_num(const char *output_name)
     if (target != -1) {
         return target;
     }
+
     // As a fall back, use the next available number
-    int ws_num = 0;
-    do {
-        ws_num++;
-    } while (workspace_by_number(ws_num));
-    return ws_num;
+    return workspace_get_max_num() + 1;
 }
 
 static bool
@@ -412,7 +446,7 @@ struct sway_workspace *
 workspace_prev(struct sway_workspace *workspace)
 {
     int n = workspace->num;
-    struct sway_workspace *prev = NULL, *last = NULL, *other = NULL;
+    struct sway_workspace *prev = NULL, *last = NULL;
 
     // Find the prev numbered workspace
     int prevn = -1, lastn = -1;
@@ -425,14 +459,6 @@ workspace_prev(struct sway_workspace *workspace)
                 // The greatest numbered (or last) workspace
                 last = ws;
                 lastn = last->num;
-            }
-            if (!other && wsn < 0) {
-                // The last named workspace
-                other = ws;
-            }
-            if (wsn < 0) {
-                // Haven't reached the numbered workspaces
-                continue;
             }
             if (wsn < n && (!prev || wsn > prevn)) {
                 // The closest workspace before the current
@@ -452,7 +478,7 @@ struct sway_workspace *
 workspace_next(struct sway_workspace *workspace)
 {
     int n = workspace->num;
-    struct sway_workspace *next = NULL, *first = NULL, *other = NULL;
+    struct sway_workspace *next = NULL, *first = NULL;
 
     // Find the next numbered workspace
     int nextn = -1, firstn = -1;
@@ -465,14 +491,6 @@ workspace_next(struct sway_workspace *workspace)
                 // The first (or least numbered) workspace
                 first = ws;
                 firstn = first->num;
-            }
-            if (!other && wsn < 0) {
-                // The first non-numbered workspace
-                other = ws;
-            }
-            if (wsn < 0) {
-                // Checked all the numbered workspaces
-                break;
             }
             if (n < wsn && (!next || wsn < nextn)) {
                 // The first workspace numerically after the current
@@ -489,37 +507,57 @@ workspace_next(struct sway_workspace *workspace)
     return next;
 }
 
-/**
- * Get the previous or next workspace on the specified output. Wraps around at
- * the end and beginning.  If next is false, the previous workspace is returned,
- * otherwise the next one is returned.
- */
-static struct sway_workspace *
-workspace_output_prev_next_impl(struct sway_output *output, int dir)
-{
-    struct sway_seat *seat = input_manager_current_seat();
-    struct sway_workspace *workspace = seat_get_focused_workspace(seat);
-    if (!workspace) {
-        sway_log(SWAY_DEBUG,
-                 "No focused workspace to base prev/next on output off of");
-        return NULL;
-    }
-
-    int index = list_find(output->workspaces, workspace);
-    size_t new_index = wrap(index + dir, output->workspaces->length);
-    return output->workspaces->items[new_index];
-}
-
 struct sway_workspace *
 workspace_output_next(struct sway_workspace *current)
 {
-    return workspace_output_prev_next_impl(current->output, 1);
+    int nextn = -1;
+    struct sway_workspace *nextws = NULL;
+
+    for (int i = 0; i < current->output->workspaces->length; ++i) {
+        struct sway_workspace *ws = current->output->workspaces->items[i];
+
+        if (ws->num > current->num && (nextn == -1 || ws->num < nextn)) {
+            // the closest to current, working forwards
+            nextn = ws->num;
+            nextws = ws;
+        }
+    }
+
+    if (!nextws) {
+        // no next, create one with maximum id
+        nextws = workspace_create(current->output, -1);
+    }
+
+    return nextws;
 }
 
 struct sway_workspace *
 workspace_output_prev(struct sway_workspace *current)
 {
-    return workspace_output_prev_next_impl(current->output, -1);
+    int prevn = -1;
+    struct sway_workspace *prevws = NULL;
+
+    for (int i = 0; i < current->output->workspaces->length; ++i) {
+        struct sway_workspace *ws = current->output->workspaces->items[i];
+
+        if (ws->num < current->num && (prevn == -1 || ws->num > prevn)) {
+            // the closest to current, working backwards
+            prevn = ws->num;
+            prevws = ws;
+        }
+    }
+
+    if (!prevws) {
+        // Wrap around to maximum if no previous available
+        int maxn = workspace_get_output_max_num(current->output);
+        if (maxn == -1) {
+            return NULL;
+        }
+
+        prevws = workspace_by_number(maxn);
+    }
+
+    return prevws;
 }
 
 struct sway_workspace *
