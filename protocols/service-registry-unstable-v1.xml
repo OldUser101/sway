@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="service_registry_unstable_v1">
+    <copyright>
+        Copyright © 2026 Nathan Gill
+
+        Permission to use, copy, modify, distribute, and sell this
+        software and its documentation for any purpose is hereby granted
+        without fee, provided that the above copyright notice appear in
+        all copies and that both that copyright notice and this permission
+        notice appear in supporting documentation, and that the name of
+        the copyright holders not be used in advertising or publicity
+        pertaining to distribution of the software without specific,
+        written prior permission.  The copyright holders make no
+        representations about the suitability of this software for any
+        purpose.  It is provided "as is" without express or implied
+        warranty.
+
+        THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS
+        SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+        FITNESS, IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+        SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+        WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+        AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+        ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+        THIS SOFTWARE.
+    </copyright>
+
+    <description summary="Compositor-scoped service discovery and registration">
+        This protocol allows clients to claim a service by name, to associate
+        the service name with the claiming client. Other clients may look up a
+        service by name to obtain its identifier. A service name can have at
+        most one active client at a time.
+
+        Claimed services are assigned an opaque identifier by the compositor.
+        The identifier uniquely identifies the service across compositor
+        instances for the lifetime of the compositor, remaining associated with
+        the service until the claim is released. The method used to generate
+        the service identifier is compositor-specific and must not be relied
+        upon by clients.
+
+        A service claim is owned by the client that created it. The claim and
+        its service identifier are automatically released by the compositor
+        when the owning client disconnects, or the client explicitly releases
+        it. Releasing a claim makes its corresponding service name available
+        for a subsequent claim.
+    </description>
+
+    <interface name="service_registry_manager_v1" version="1">
+        <description summary="Registry for claiming and discovering service names">
+            This interface allows clients to access the service registry to
+            claim and lookup service names.
+        </description>
+
+        <request name="claim">
+            <description summary="Claim a service name">
+                Claim a service name for this client. The compositor will
+                allocate a service identifier for this client that uniquely
+                identifies the claim until the client disconnects, or the claim
+                is explicitly released.
+            </description>
+            <arg name="id" type="new_id" interface="service_claim_v1"/>
+            <arg name="name" type="string" summary="service name to claim"/>
+        </request>
+
+        <request name="lookup">
+            <description summary="Look up a service identifier by service name">
+                Look up a service identifier by service name. The result of a
+                lookup will be returned by the 'found' and 'not_found' events
+                for successful and unsuccessful lookups respectively.
+            </description>
+            <arg name="id" type="new_id" interface="service_lookup_v1"/>
+            <arg name="name" type="string" summary="service name to look up"/>
+        </request>
+    </interface>
+
+    <interface name="service_claim_v1" version="1">
+        <description summary="An active claim over a service name">
+            This interface represents an active claim over a service name.
+            This object is assigned a service identifier that is unique across
+            concurrent compositor instances and must not be reused by a
+            compositor during its lifetime.
+        </description>
+
+        <enum name="error">
+            <entry name="invalid_name" value="1"
+                summary="service name is invalid"/>
+            <entry name="already_claimed" value="2"
+                summary="service name is already claimed"/>
+        </enum>
+
+        <event name="claimed">
+            <description summary="claim succeeded">
+                Report that the service claim succeeded. This event provides
+                the unique service identifier allocated for this claim to the
+                client, as well as the claimed name.
+
+                After this event is received, no more events will be sent for
+                this object. The claim is valid until this object is destroyed
+                or its owning client disconnects.
+            </description>
+            <arg name="id" type="string" summary="service identifier representing this claim"/>
+        </event>
+
+        <event name="failed">
+            <description summary="claim failed">
+                Failed to create a service claim for the given service name.
+                This may be because the name is invalid, or it has already
+                been claimed by another client.
+
+                After this event is received, no more events will be sent for
+                this object.
+            </description>
+            <arg name="reason" type="uint" enum="error"
+                summary="reason for claim failure"/>
+        </event>
+
+        <request name="destroy" type="destructor">
+            <description summary="Destroy the service claim">
+                Request this service claim is released. The service name will
+                become available for claim by other clients. The service
+                identifier representing this claim is no longer valid after
+                this request is made.
+            </description>
+        </request>
+    </interface>
+
+    <interface name="service_lookup_v1" version="1">
+        <description summary="A result of a service lookup">
+            This interface represents the result of a service lookup. The main
+            purpose of a lookup is to find the service identifier for a service
+            claim by name.
+        </description>
+
+        <event name="found">
+            <description summary="lookup succeeded">
+                The lookup succeeded, the requested service name has been
+                claimed by another client and a service identifier has been
+                allocated for it.
+
+                After this event is received, no more events will be sent for
+                this object, and it can be destroyed safely.
+            </description>
+            <arg name="id" type="string"
+                summary="service identifier representing the claim"/>
+        </event>
+
+        <event name="not_found">
+            <description summary="lookup failed">
+                The lookup failed, this is likely because the service name
+                has not been claimed by a client yet.
+
+                After this event is received, no more events will be sent for
+                this object, and it can be destroyed safely.
+            </description>
+        </event>
+
+        <request name="destroy" type="destructor">
+            <description summary="Destroy the lookup">
+                Requests that the lookup object be destroyed. If the lookup
+                is not yet complete, it will be cancelled, suppressing any
+                results.
+            </description>
+        </request>
+    </interface>
+</protocol>
