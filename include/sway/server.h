@@ -3,6 +3,7 @@
 #include "config.h"
 #include "list.h"
 #include "sway/desktop/idle_inhibit_v1.h"
+#include "sway/protocols/service_registry.h"
 #include <stdbool.h>
 #include <wayland-server-core.h>
 #if WLR_HAS_XWAYLAND
@@ -122,6 +123,8 @@ struct sway_server {
     struct wlr_tearing_control_manager_v1 *tearing_control_v1;
     struct wl_listener tearing_control_new_object;
     struct wl_list tearing_controllers; // sway_tearing_controller::link
+
+    struct service_registry *service_registry;
 
     struct wl_list pending_launcher_ctxs; // launcher_ctx::link
 

@@ -215,6 +215,8 @@ sway_sources = files(
 	'tree/view.c',
 	'tree/workspace.c',
 	'tree/output.c',
+
+    'protocols/service_registry.c',
 )
 
 sway_deps = [

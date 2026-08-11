@@ -7,6 +7,7 @@
 #include "sway/input/cursor.h"
 #include "sway/input/input-manager.h"
 #include "sway/output.h"
+#include "sway/protocols/service_registry.h"
 #include "sway/tree/root.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -454,6 +455,8 @@ server_init(struct sway_server *server)
     server->request_set_cursor_shape.notify = handle_request_set_cursor_shape;
     wl_signal_add(&cursor_shape_manager->events.request_set_shape,
                   &server->request_set_cursor_shape);
+
+    server->service_registry = service_registry_create(server->wl_display);
 
     wl_list_init(&server->pending_launcher_ctxs);
 
